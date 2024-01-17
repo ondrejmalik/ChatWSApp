@@ -1,0 +1,280 @@
+﻿@page "/chat"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.SignalR.Client
+@using BlazorApp2.Shared
+@using Realms
+@using Credentials = BlazorApp2.Shared.Credentials
+@using System.Security.Cryptography
+@using System.Text
+@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
+
+@if (!Credentials.IsLoggedIn)
+{
+    NavigationManager.NavigateTo("/");
+}
+
+<PageTitle>Home</PageTitle>
+<div id="headder" class="message-bubble">
+    <h1 style="font-family: 'Comic Sans MS'; text-align: center">Chat</h1>
+</div>
+<hr>
+<div>
+    <h2 style="font-family: 'Comic Sans MS'">Rooms</h2>
+    @foreach (string room in GetRooms())
+    {
+        <div class="message-bubble" id="display-room">
+            <p class="message-text">@room</p>
+        </div>
+    }
+</div>
+@if (!isJoined)
+{
+    <div class="form-group">
+        <div class="form-floating">
+            <input type="text" id="group-input" name="group" class="form-control" placeholder="Group name" @bind="groupInput">
+            <label for="group-input">Group</label>
+        </div>
+        <div class="form-floating">
+            <input type="text" id="key-input" name="key" class="form-control" placeholder="Key(optional)" @bind="keyInput">
+            <label for="key-input">Key</label>
+        </div>
+        <button @onclick="Join" disabled="@(!IsConnected)" class="btn btn-primary btn-lg px-4 gap-3">Join</button>
+    </div>
+}
+else
+{
+    <hr>
+    <div>
+        <ul id="messagesList">
+            @foreach (var message in messages)
+            {
+                @if (message.User == Credentials.Username)
+                {
+                    <div class="message-bubble" id="display-right">
+                        <li class="message-text"><strong>@message.User</strong>: @message.Text</li>
+                    </div>
+                }
+                else
+                {
+                    <div class="message-bubble" id="display-left">
+                        <li class="message-text"><strong>@message.User</strong>: @message.Text</li>
+                    </div>
+                }
+
+                <br>
+            }
+        </ul>
+    </div>
+    <hr>
+    <div class="form-floating" id="message-container">
+        <input type="text" id="message-input" name="message" class="form-control" placeholder="message" @bind="messageInput">
+        <label for="message-input">Message</label>
+    </div>
+    <button id="send" @onclick="Send" disabled="@(!IsConnected)" class="btn btn-primary btn-lg px-4 gap-3">Send</button>
+}
+<style>
+hr{
+    background-color: #5c94ff;
+}
+h1{
+Color : sandybrown;
+}
+h2{
+Color : sandybrown;
+
+}
+body{
+    margin: 0px;
+    padding: 0px;
+    background-color: #1b1a1f;
+}
+.message-bubble{
+    background-color: #e6e6e6;
+    border-radius: 10px;
+    margin: 10px;
+    display: inline-block;
+    word-wrap: break-word;
+}
+.message-text{
+    font-size: 20px;
+    margin: 0px;
+    margin-right: 10px;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    overflow: clip;
+}
+#headder{
+    padding: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
+    left: 50%;
+    position: relative;
+    transform: translate(-50%, 0);
+    word-wrap: normal;
+    background-color: #20202a;
+}
+#messagesList{
+    padding: 0px;
+    width: 100%;
+    display: inline-block;
+}
+#display-left{
+    padding: 10px;
+    position: relative;
+    list-style-type: none;
+}
+#display-room{
+    padding: 10px;
+    margin-left: 0px;
+    margin-right: 20px;
+    position: relative;
+    list-style-type: none;
+}
+#display-right{
+    padding: 10px;
+    position: relative;
+    left: 80%;
+    list-style-type: none;
+}
+#message-container{
+    width: 90%;
+    display: inline-block;
+}
+#send{
+    margin: 10px;
+}
+#group-input{
+    display: inline-block;
+}
+#key-input{
+    display: inline-block;
+}
+.form-floating{
+    display: inline-block;
+}
+</style>
+
+@code {
+    private HubConnection? hubConnection;
+    private List<Message> messages = new List<Message>();
+    private string? messageInput = "";
+    private string? groupInput = "";
+    private string? keyInput = "";
+    private bool isJoined = false;
+    ManualResetEvent manualResetEvent = new ManualResetEvent(false);
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+        hubConnection.On<Message>("ReceiveMessage", (message) =>
+        {
+            Realm realm = Realm.GetInstance(Login.config);
+            using (var trans = realm.BeginWrite())
+            {
+                realm.Add(
+                    new RealmMessage()
+                    {
+                        GroupName = GetFullGroupName(),
+                        User = message.User,
+                        Text = message.Text
+                    });
+                trans.Commit();
+            }
+
+            manualResetEvent.WaitOne();
+            messages.Add(message);
+            InvokeAsync(StateHasChanged);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task Join()
+    {
+        if (hubConnection is not null)
+        {
+            messages.Clear();
+            await hubConnection.SendAsync("AddGroup", GetFullGroupName());
+            LoadMessages();
+            isJoined = true;
+            manualResetEvent.Set();
+        }
+    }
+
+    private async Task Send()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SendMessage", GetFullGroupName(), new Message()
+            {
+                User = Credentials.Username,
+                Text = messageInput
+            });
+        }
+    }
+
+    public bool IsConnected =>
+        hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+
+    private string GetFullGroupName()
+    {
+        return $"{groupInput},{string.Concat(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(keyInput)).Select(b => b.ToString("x2")))}";
+    }
+
+    private void LoadMessages()
+    {
+        Realm realm = Realm.GetInstance(Login.config);
+        string? fullGroupName = GetFullGroupName();
+        var queryResults = realm.All<RealmMessage>().Where(x => x.GroupName == fullGroupName).OrderBy(x => x.Date);
+        RealmMessage[] RealmMessages = queryResults.ToArray();
+        foreach (RealmMessage message in RealmMessages)
+        {
+            messages.Add(new Message()
+            {
+                User = message.User,
+                Text = message.Text
+            });
+        }
+    }
+
+    private List<string> GetRooms()
+    {
+        Realm realm = Realm.GetInstance(Login.config);
+        string? fullGroupName = GetFullGroupName();
+        var queryResults = realm.All<RealmMessage>().ToList();
+        List<string> rooms = new List<string>();
+        HashSet<string> uniqueRooms = new HashSet<string>();
+        foreach (RealmMessage message in queryResults)
+        {
+            if (!uniqueRooms.Contains(message.GroupName))
+            {
+                uniqueRooms.Add(message.GroupName);
+                string[] split = message.GroupName.Split(",");
+                if (split[1] != "d41d8cd98f00b204e9800998ecf8427e")
+                {
+                    rooms.Add($"{split[0]} (private)");
+                }
+                else
+                {
+                    rooms.Add($"{split[0]} (public)");
+                }
+            }
+        }
+
+        return rooms;
+    }
+
+}
+
+}

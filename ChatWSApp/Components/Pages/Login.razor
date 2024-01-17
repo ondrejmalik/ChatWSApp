@@ -1,0 +1,108 @@
+﻿@page "/"
+@using Realms
+@using BCrypt.Net
+@rendermode InteractiveServer
+@using BlazorApp2.Shared
+@using System.Runtime.Intrinsics.Arm
+@inject NavigationManager NavigationManager
+<PageTitle>Index</PageTitle>
+
+<div id="loginContainer">
+    <form id="loginForm">
+        <div class="form-floating">
+            <input type="text" id="username" name="username" class="form-control" placeholder="username" @bind="Credentials.Username">
+            <label for="username">Username</label>
+        </div>
+        <div class="form-floating">
+            <input type="password" id="password" name="password" class="form-control" placeholder="password" @bind="Credentials.Password">
+            <label for="password">Password</label>
+        </div>
+    </form>
+    <div id="buttons">
+        <button type="button" value="Login" @onclick="RealmLogin" class="btn btn-primary btn-lg px-4 gap-3">Login</button>
+        <button type="button" value="Register" @onclick="RealmRegister" class="btn btn-primary btn-lg px-4 gap-3">Register</button>
+
+    </div>
+</div>
+<h1 id="debugstr">@debugstr</h1>
+<style>
+body{
+margin: 0px;
+padding: 0px;
+background-color: #1b1a1f;
+}
+page{
+margin: 0px;
+padding: 0px;
+}
+    #loginContainer {
+        position: absolute;
+         top: 150px;
+         left: 50%;
+         transform: translate(-50%);
+        background: #20202a;
+        padding: 20px;
+        border-radius: 20px;
+    }
+    #loginForm{
+        margin: 10px;
+        
+    }
+    #buttons{
+            margin: 10px;
+            margin-top: 40px;
+    }
+    #debugstr{
+    margin: auto;
+    position: relative;
+    text-align: center;
+    color: sandybrown;
+    }
+</style>
+
+@code
+{
+    private string debugstr = "";
+    public static RealmConfiguration config = new RealmConfiguration(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Database.realm"));
+
+    private void RealmLogin()
+    {
+        try
+        {
+
+            Realm realm = Realm.GetInstance(config);
+            RealmCredentials credentials = realm.All<RealmCredentials>().Where(x => x.Username == Credentials.Username).FirstOrDefault();
+            if (BCrypt.Verify(Credentials.Password, credentials.Password))
+            {
+                Credentials.IsLoggedIn = true;
+                debugstr = "Logged in";
+                NavigationManager.NavigateTo("/chat");
+            }
+            else
+            {
+                debugstr = "Wrong credentials";    
+            }
+        }
+        catch (Exception e)
+        {
+            debugstr = "Wrong credentials";
+        }
+        
+    }
+
+    private void RealmRegister()
+    {
+        Realm realm = Realm.GetInstance(config);
+        using (var trans = realm.BeginWrite())
+        {
+            realm.Add(new RealmCredentials()
+            {
+                Username = Credentials.Username,
+                Password = BCrypt.HashPassword(Credentials.Password)
+            });
+            trans.Commit();
+        }
+
+        debugstr = "Registered";
+    }
+}

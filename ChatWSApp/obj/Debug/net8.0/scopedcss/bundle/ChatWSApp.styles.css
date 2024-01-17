@@ -1,0 +1,48 @@
+/* _content/ChatWSApp/Components/Layout/MainLayout.razor.rz.scp.css */
+/* _content/ChatWSApp/Components/Pages/Chat.razor.rz.scp.css */
+
+body[b-soqouiuh77]{
+
+}
+.message-bubble[b-soqouiuh77]{
+    background-color: #e6e6e6;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    width: 25%;
+    display: inline-block;
+    word-wrap: break-word;
+}
+.message-text[b-soqouiuh77]{
+    font-size: 20px;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    overflow: clip;
+}
+#messagesList[b-soqouiuh77]{
+    width: 80%;
+    height: 80%;
+    display: inline-block;
+}
+#display-left[b-soqouiuh77]{
+    padding: 10px;
+    position: relative;
+    list-style-type: none;
+}
+#display-right[b-soqouiuh77]{
+    padding: 10px;
+    position: relative;
+    left: 80%;
+    list-style-type: none;
+}
+#message-container[b-soqouiuh77]{
+    display: block;
+}
+#group-input[b-soqouiuh77]{
+    display: inline-block;
+}
+#key-input[b-soqouiuh77]{
+    display: inline-block;
+}
+.form-floating[b-soqouiuh77]{
+    display: inline-block;
+}

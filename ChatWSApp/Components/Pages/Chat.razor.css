@@ -1,0 +1,46 @@
+﻿
+body{
+
+}
+.message-bubble{
+    background-color: #e6e6e6;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px;
+    width: 25%;
+    display: inline-block;
+    word-wrap: break-word;
+}
+.message-text{
+    font-size: 20px;
+    font-family: "Comic Sans MS", cursive, sans-serif;
+    overflow: clip;
+}
+#messagesList{
+    width: 80%;
+    height: 80%;
+    display: inline-block;
+}
+#display-left{
+    padding: 10px;
+    position: relative;
+    list-style-type: none;
+}
+#display-right{
+    padding: 10px;
+    position: relative;
+    left: 80%;
+    list-style-type: none;
+}
+#message-container{
+    display: block;
+}
+#group-input{
+    display: inline-block;
+}
+#key-input{
+    display: inline-block;
+}
+.form-floating{
+    display: inline-block;
+}
