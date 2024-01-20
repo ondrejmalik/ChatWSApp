@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "Mjh8AB4OtOpIBsA9Gimd3iAnVR0I6CaF01mln/B0jmc=",
+  "Hash": "X3VkyqTq/bPHCrPj133f41qf7P1X+cC9Qj+p2ngjyfE=",
   "Source": "ChatWSApp",
   "BasePath": "_content/ChatWSApp",
   "Mode": "Default",
@@ -72,6 +72,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\app.css"
+    },
+    {
+      "Identity": "A:\\Projects\\BlazorApp2\\ChatWSApp\\wwwroot\\audio.mp3",
+      "SourceId": "ChatWSApp",
+      "SourceType": "Discovered",
+      "ContentRoot": "A:\\Projects\\BlazorApp2\\ChatWSApp\\wwwroot\\",
+      "BasePath": "_content/ChatWSApp",
+      "RelativePath": "audio.mp3",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\audio.mp3"
     },
     {
       "Identity": "A:\\Projects\\BlazorApp2\\ChatWSApp\\wwwroot\\bootstrap\\bootstrap.min.css",

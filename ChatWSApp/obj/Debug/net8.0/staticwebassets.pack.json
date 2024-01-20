@@ -9,6 +9,10 @@
       "PackagePath": "staticwebassets\\app.css"
     },
     {
+      "Id": "A:\\Projects\\BlazorApp2\\ChatWSApp\\wwwroot\\audio.mp3",
+      "PackagePath": "staticwebassets\\audio.mp3"
+    },
+    {
       "Id": "A:\\Projects\\BlazorApp2\\ChatWSApp\\wwwroot\\bootstrap\\bootstrap.min.css",
       "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
     },

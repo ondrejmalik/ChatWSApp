@@ -48,8 +48,6 @@ A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.AssemblyInfoInputs.c
 A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.AssemblyInfo.cs
 A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.csproj.CoreCompileInputs.cache
 A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.MvcApplicationPartsAssemblyInfo.cache
-A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.csproj.Fody.CopyLocal.cache
-A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.csproj.Fody.RuntimeCopyLocal.cache
 A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\staticwebassets.build.json
 A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\staticwebassets.development.json
 A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\staticwebassets\msbuild.ChatWSApp.Microsoft.AspNetCore.StaticWebAssets.props
@@ -67,3 +65,6 @@ A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\refint\ChatWSApp.dll
 A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.pdb
 A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.genruntimeconfig.cache
 A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ref\ChatWSApp.dll
+A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.sourcelink.json
+A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.csproj.Fody.CopyLocal.cache
+A:\Projects\BlazorApp2\ChatWSApp\obj\Debug\net8.0\ChatWSApp.csproj.Fody.RuntimeCopyLocal.cache

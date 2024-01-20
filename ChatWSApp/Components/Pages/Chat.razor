@@ -8,18 +8,16 @@
 @using System.Text
 @inject NavigationManager NavigationManager
 @implements IAsyncDisposable
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
 
-@if (!Credentials.IsLoggedIn)
-{
-    NavigationManager.NavigateTo("/");
-}
 
 <PageTitle>Home</PageTitle>
 <div id="headder" class="message-bubble">
     <h1 style="font-family: 'Comic Sans MS'; text-align: center">Chat</h1>
 </div>
 <hr>
-<div>
+<div id="rooms-container">
     <h2 style="font-family: 'Comic Sans MS'">Rooms</h2>
     @foreach (string room in GetRooms())
     {
@@ -87,6 +85,9 @@ Color : sandybrown;
 body{
     margin: 0px;
     padding: 0px;
+    width: 60%;
+    margin-left: 20%;
+    margin-right: 20%;
     background-color: #1b1a1f;
 }
 .message-bubble{
@@ -116,7 +117,12 @@ body{
 #messagesList{
     padding: 0px;
     width: 100%;
+    height: 50vh;
+    word-wrap: normal;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: inline-block;
+
 }
 #display-left{
     padding: 10px;
@@ -128,20 +134,27 @@ body{
     margin-left: 0px;
     margin-right: 20px;
     position: relative;
-    list-style-type: none;
+    display: inline-block;
 }
 #display-right{
     padding: 10px;
     position: relative;
-    left: 80%;
     list-style-type: none;
+    left: 97%;
+    transform: translate(-100%, 0);
+}
+#rooms-container{
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 #message-container{
-    width: 90%;
-    display: inline-block;
+    display: block;
 }
 #send{
-    margin: 10px;
+    display: block;
+    width: 100%;
+    margin-top: 10px; 
 }
 #group-input{
     display: inline-block;
@@ -161,10 +174,12 @@ body{
     private string? groupInput = "";
     private string? keyInput = "";
     private bool isJoined = false;
+    public Credentials Credentials = new Credentials();
     ManualResetEvent manualResetEvent = new ManualResetEvent(false);
 
     protected override async Task OnInitializedAsync()
     {
+
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
             .Build();
@@ -192,12 +207,19 @@ body{
         await hubConnection.StartAsync();
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var result = await ProtectedSessionStore.GetAsync<Credentials>("credentials");
+        this.Credentials = result.Value;
+        base.OnAfterRender(firstRender);
+    }
+
     private async Task Join()
     {
         if (hubConnection is not null)
         {
             messages.Clear();
-            await hubConnection.SendAsync("AddGroup", GetFullGroupName());
+            await hubConnection.SendAsync("AddGroup", GetFullGroupName(), Credentials.Username);
             LoadMessages();
             isJoined = true;
             manualResetEvent.Set();

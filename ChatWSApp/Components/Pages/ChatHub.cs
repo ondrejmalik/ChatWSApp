@@ -23,12 +23,12 @@ public class ChatHub : Hub
     }
     
 
-    public async Task AddGroup(string groupName)
+    public async Task AddGroup(string groupName, string username)
     {
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         await SendMessage(groupName, new Message
         {
-            User = Credentials.Username,
+            User = username,
             Text = "has Connected"
         });
     }

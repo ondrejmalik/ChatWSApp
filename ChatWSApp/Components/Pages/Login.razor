@@ -3,8 +3,9 @@
 @using BCrypt.Net
 @rendermode InteractiveServer
 @using BlazorApp2.Shared
-@using System.Runtime.Intrinsics.Arm
 @inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
 <PageTitle>Index</PageTitle>
 
 <div id="loginContainer">
@@ -21,10 +22,9 @@
     <div id="buttons">
         <button type="button" value="Login" @onclick="RealmLogin" class="btn btn-primary btn-lg px-4 gap-3">Login</button>
         <button type="button" value="Register" @onclick="RealmRegister" class="btn btn-primary btn-lg px-4 gap-3">Register</button>
-
     </div>
 </div>
-<h1 id="debugstr">@debugstr</h1>
+<!--<h1 id="debugstr">@debugstr</h1>-->
 <style>
 body{
 margin: 0px;
@@ -63,31 +63,31 @@ padding: 0px;
 @code
 {
     private string debugstr = "";
-    public static RealmConfiguration config = new RealmConfiguration(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"Data\Database.realm"));
-
+    public static RealmConfiguration config = new RealmConfiguration(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"ChatWSApp\Data\Database.realm"));
+    public Credentials Credentials { get; set; } = new Credentials();
+    
     private void RealmLogin()
     {
         try
         {
-
             Realm realm = Realm.GetInstance(config);
             RealmCredentials credentials = realm.All<RealmCredentials>().Where(x => x.Username == Credentials.Username).FirstOrDefault();
             if (BCrypt.Verify(Credentials.Password, credentials.Password))
             {
                 Credentials.IsLoggedIn = true;
                 debugstr = "Logged in";
-                NavigationManager.NavigateTo("/chat");
+                StoreCredentialsToSession();
+                NavigationManager.NavigateTo($"/chat");
             }
             else
             {
-                debugstr = "Wrong credentials";    
+                debugstr = "Wrong credentials";
             }
         }
         catch (Exception e)
         {
             debugstr = "Wrong credentials";
         }
-        
     }
 
     private void RealmRegister()
@@ -104,5 +104,10 @@ padding: 0px;
         }
 
         debugstr = "Registered";
+    }
+
+    private void StoreCredentialsToSession()
+    {
+        ProtectedSessionStore.SetAsync("credentials", Credentials);
     }
 }

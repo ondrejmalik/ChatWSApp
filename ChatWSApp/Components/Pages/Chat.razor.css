@@ -1,39 +1,82 @@
-﻿
-body{
+﻿hr{
+    background-color: #5c94ff;
+}
+h1{
+    Color : sandybrown;
+}
+h2{
+    Color : sandybrown;
 
+}
+body{
+    margin: 0px;
+    padding: 0px;
+    background-color: #1b1a1f;
 }
 .message-bubble{
     background-color: #e6e6e6;
     border-radius: 10px;
-    padding: 10px;
     margin: 10px;
-    width: 25%;
     display: inline-block;
     word-wrap: break-word;
 }
 .message-text{
     font-size: 20px;
+    margin: 0px;
+    margin-right: 10px;
     font-family: "Comic Sans MS", cursive, sans-serif;
     overflow: clip;
 }
+#headder{
+    padding: 10px;
+    padding-left: 50px;
+    padding-right: 50px;
+    left: 50%;
+    position: relative;
+    transform: translate(-50%, 0);
+    word-wrap: normal;
+    background-color: #20202a;
+}
 #messagesList{
-    width: 80%;
-    height: 80%;
+    padding: 0px;
+    width: 100%;
+    height: 55vh;
+    word-wrap: normal;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: inline-block;
+
 }
 #display-left{
     padding: 10px;
     position: relative;
     list-style-type: none;
 }
+#display-room{
+    padding: 10px;
+    margin-left: 0px;
+    margin-right: 20px;
+    position: relative;
+    display: inline-block;
+}
 #display-right{
     padding: 10px;
     position: relative;
-    left: 80%;
     list-style-type: none;
+    left: 97%;
+    transform: translate(-100%, 0);
+}
+#rooms-container{
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 #message-container{
-    display: block;
+    width: 90%;
+    display: inline-block;
+}
+#send{
+    margin: 10px;
 }
 #group-input{
     display: inline-block;

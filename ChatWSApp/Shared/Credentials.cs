@@ -1,8 +1,8 @@
 ﻿namespace BlazorApp2.Shared;
 
-public static class Credentials
+public class Credentials
 {
-    public static string Username { get; set; }
-    public static string Password { get; set; }
-    public static bool IsLoggedIn { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
+    public bool IsLoggedIn { get; set; } = false;
 }
